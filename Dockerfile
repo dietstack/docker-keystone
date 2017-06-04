@@ -1,5 +1,5 @@
 FROM alpine:3.5
-ENV SVC_NAME=glance SVC_VERSION=13.0.0
+ENV SVC_NAME=keystone SVC_VERSION=10.0.1
 ENV RELEASE_URL=https://github.com/openstack/$SVC_NAME/archive/$SVC_VERSION.tar.gz
 
 RUN apk add --no-cache ca-certificates wget python; \
