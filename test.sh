@@ -11,13 +11,13 @@ BRANCH=master
 cleanup() {
     echo "Clean up ..."
 
-    docker stop ${CONT_PREFIX}_galera
+    docker stop ${CONT_PREFIX}_mariadb
     docker stop ${CONT_PREFIX}_memcached
     docker stop ${CONT_PREFIX}_keystone
 
-    docker rm ${CONT_PREFIX}_galera
-    docker rm ${CONT_PREFIX}_memcached
-    docker rm ${CONT_PREFIX}_keystone
+    docker rm -v ${CONT_PREFIX}_mariadb
+    docker rm -v ${CONT_PREFIX}_memcached
+    docker rm -v ${CONT_PREFIX}_keystone
 }
 
 cleanup
@@ -27,15 +27,15 @@ cleanup
 
 ##### Start Containers
 
-echo "Starting galera container ..."
-docker run --net=host -d -e MYSQL_ROOT_PASSWORD=veryS3cr3t --name ${CONT_PREFIX}_galera \
+echo "Starting mariadb container ..."
+docker run  --net=host -d -e MYSQL_ROOT_PASSWORD=veryS3cr3t --name ${CONT_PREFIX}_mariadb \
        mariadb:10.2
 
 echo "Wait till DB is running ."
 wait_for_port 3306 30
 
 echo "Starting Memcached node (tokens caching) ..."
-docker run -d --net=host -e DEBUG= --name ${CONT_PREFIX}_memcached memcached
+docker run  -d --net=host -e DEBUG= --name ${CONT_PREFIX}_memcached memcached
 
 sleep 10
 
@@ -44,7 +44,7 @@ create_db_osadmin keystone keystone veryS3cr3t veryS3cr3t
 
 echo "Starting keystone container"
 #KEYSTONE_TAG=$(docker images | grep -w keystone | head -n 1 | awk '{print $2}')
-docker run -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
+docker run  -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
            --name ${CONT_PREFIX}_keystone keystone:latest
 
 ##### TESTS #####
@@ -85,7 +85,7 @@ echo ${OUT}
 # Test whether service was created
 URL="http://127.0.0.1:5000/v3/services"
 OUT=$(curl -s -H "X-Auth-Token:${ADMIN_TOKEN}" "${URL}")
-echo ${OUT}
+echo Test check output: ${OUT}
 if [[ ${OUT} != *"services"* || ${OUT} != *"keystone"* ]]; then
     echo "TEST ERROR !!!"
     exit 1
@@ -96,4 +96,3 @@ echo "======== Success :) ========="
 if [[ "$1" != "noclean" ]]; then
     cleanup
 fi
-

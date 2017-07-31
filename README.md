@@ -1,1 +1,1 @@
-# Keystone docker container
+# Keystone docker container build on debian stretch docker image
