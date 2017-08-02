@@ -6,6 +6,7 @@
 # get name of app from the path
 # /../../docker-app_name > app_name
 APP_NAME=${PWD##*-}
+PROJ_NAME=dietstack
 
 # set version based on the git commit
 VERSION=$(git describe --abbrev=7 --tags)
@@ -13,6 +14,6 @@ VERSION=$(git describe --abbrev=7 --tags)
 docker build --build-arg http_proxy=${http_proxy:-} \
        --build-arg https_proxy=${https_proxy:-} \
        --build-arg no_proxy=${no_proxy:-} \
-       $@ -t $APP_NAME:$VERSION .
+       $@ -t $PROJ_NAME/$APP_NAME:$VERSION .
 
-docker tag $APP_NAME:$VERSION $APP_NAME:latest
+docker tag $PROJ_NAME/$APP_NAME:$VERSION $PROJ_NAME/$APP_NAME:latest
