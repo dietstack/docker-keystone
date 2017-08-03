@@ -35,7 +35,8 @@ RUN apt update; apt install -y $BUILD_PACKAGES && \
       else \
         git clone $REPO --single-branch --depth=1 --branch $BRANCH; \
       fi; \
-      cd /$SVC_NAME; pip install -r requirements.txt -c /app/upper-constraints.txt && python setup.py install; \
+      cd /$SVC_NAME; pip install -r requirements.txt -c /app/upper-constraints.txt && python setup.py install && \
+      rm -rf /$SVC_NAME/.git; \
     fi; \
     pip install supervisor uwsgi PyMySQL python-memcached && \
     apt remove -y --auto-remove $BUILD_PACKAGES &&  \
