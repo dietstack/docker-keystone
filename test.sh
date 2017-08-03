@@ -37,7 +37,8 @@ wait_for_port 3306 30
 echo "Starting Memcached node (tokens caching) ..."
 docker run  -d --net=host -e DEBUG= --name ${CONT_PREFIX}_memcached memcached
 
-sleep 10
+echo "Wait till Memcached is running ."
+wait_for_port 11211 30
 
 # create database for keystone
 create_db_osadmin keystone keystone veryS3cr3t veryS3cr3t
