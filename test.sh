@@ -2,9 +2,10 @@
 # Integration test for keystone service
 # Test runs mysql,memcached and keystone container and checks whether keystone is running on public and admin ports
 
+DOCKER_PROJ_NAME=${DOCKER_PROJ_NAME:-''}
+
 ADMIN_TOKEN=veryS3cr3t
 CONT_PREFIX=test
-BRANCH=master
 
 . lib/functions.sh
 
@@ -46,7 +47,7 @@ create_db_osadmin keystone keystone veryS3cr3t veryS3cr3t
 echo "Starting keystone container"
 #KEYSTONE_TAG=$(docker images | grep -w keystone | head -n 1 | awk '{print $2}')
 docker run  -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
-           --name ${CONT_PREFIX}_keystone keystone:latest
+           --name ${CONT_PREFIX}_keystone ${DOCKER_PROJ_NAME}keystone:latest
 
 ##### TESTS #####
 
