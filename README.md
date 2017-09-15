@@ -22,9 +22,11 @@ docker run -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
 
 # Environment variables
 
-DEBUG - if defined debug in all configs is set to true
-DB_HOST - ip or hostname of database server, default 127.0.0.1
-DB_PORT - tcp port of database server, default is 3306
-DB_PASSWORD - password to access database, default is veryS3cr3t
-ADMIN_TOKEN - if undefind 'veryS3cr3t' is used
-DBSYNC - if defined db_sync is going to be executed
+| Variable | Description |
+|:-:|---|
+| DEBUG | if defined debug in all configs is set to true |
+| DB_HOST | ip or hostname of database server, default 127.0.0.1 |
+| DB_PORT | tcp port of database server, default is 3306 |
+| DB_PASSWORD | password to access database, default is veryS3cr3t |
+| ADMIN_TOKEN | if undefind 'veryS3cr3t' is used |
+| DBSYNC | if defined db_sync is going to be executed |
