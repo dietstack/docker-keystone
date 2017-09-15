@@ -27,6 +27,6 @@ docker run -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
 | DEBUG | if defined debug in all configs is set to true |
 | DB_HOST | ip or hostname of database server, default 127.0.0.1 |
 | DB_PORT | tcp port of database server, default is 3306 |
-| DB_PASSWORD | password to access database, default is veryS3cr3t |
-| ADMIN_TOKEN | if undefind 'veryS3cr3t' is used |
+| DB_PASSWORD | password to access mysql database, default is 'veryS3cr3t' |
+| ADMIN_TOKEN | admin token of openstack installation, default is 'veryS3cr3t' |
 | DBSYNC | if defined db_sync is going to be executed |
