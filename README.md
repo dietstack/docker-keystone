@@ -4,12 +4,18 @@ This docker image is part of dietstack instalation. The are not many reasons to 
 Entry point script does his best to generate working config file for keystone. If you need your own
 config file you can inject it into /keystone-override dir with -v argument.
 
+# Cloning
+```
+git clone https://github.com/dietstack/docker-keystone.git --recursive
+```
+
 # Prerequisties
 Container needs mysql container running.
 
 # Building
 
 ```
+cd docker-keystone
 ./build
 ```
 
