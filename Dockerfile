@@ -17,9 +17,10 @@ RUN echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf && \
     rm -rf /var/lib/apt/lists/*; rm -rf /root/.cache
 
 
-ENV SVC_NAME=keystone SVC_VERSION=12.0.0
-#ENV REPO="https://github.com/openstack/$SVC_NAME" BRANCH="stable/pike" COMMIT="05a129e"
-ENV RELEASE_URL=https://github.com/openstack/$SVC_NAME/archive/$SVC_VERSION.tar.gz
+ENV SVC_NAME=keystone
+#SVC_VERSION=12.0.0
+ENV REPO="https://github.com/openstack/$SVC_NAME" BRANCH="stable/pike" COMMIT="e851e004"
+#ENV RELEASE_URL=https://github.com/openstack/$SVC_NAME/archive/$SVC_VERSION.tar.gz
 
 ENV BUILD_PACKAGES="git build-essential libssl-dev libffi-dev python-dev"
 
