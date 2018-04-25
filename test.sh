@@ -45,11 +45,11 @@ wait_for_port 11211 30
 create_db_osadmin keystone keystone veryS3cr3t veryS3cr3t
 
 echo "Starting keystone container"
-#KEYSTONE_TAG=$(docker images | grep -w keystone | head -n 1 | awk '{print $2}')
 docker run  -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
            --name ${CONT_PREFIX}_keystone ${DOCKER_PROJ_NAME}keystone:latest
 
 ##### TESTS #####
+
 
 wait_for_port 5000 30
 ret=$?
@@ -62,6 +62,16 @@ wait_for_port 35357 30
 ret=$?
 if [ $ret -ne 0 ]; then
     echo "Error: Port 35357 not bounded!"
+    exit $ret
+fi
+
+echo "Bootstrapping keystone"
+docker run --rm --net=host -e DEBUG="true" --name bootstrap_keystone \
+           ${DOCKER_PROJ_NAME}keystone:latest \
+           bash -c "keystone-manage bootstrap --bootstrap-password verys3cr3t"
+ret=$?
+if [ $ret -ne 0 ]; then
+    echo "Bootstrapping error!"
     exit $ret
 fi
 
