@@ -2,7 +2,11 @@
 set -e
 
 # set debug
-[ $DEBUG ] && set -x
+DEBUG_OPT=false
+if [[ $DEBUG ]]; then
+        set -x
+        DEBUG_OPT=true
+fi
 
 # if keystone is not installed, quit
 which keystone-manage &>/dev/null || exit 1
@@ -31,8 +35,8 @@ if [ -f "$OVERRIDE_DIR/$CONF_FILE" ]; then
 fi
 
 if [ $OVERRIDE -eq 0 ]; then
-        echo "$LOG_MESSAGE configuring ADMIN token"
-        sed -i "s/_ADMIN_TOKEN_/$ADMIN_TOKEN/" $CONF_DIR/$CONF_FILE
+        echo "$LOG_MESSAGE configuring debug option"
+        sed -i "s/_DEBUG_OPT_/$DEBUG_OPT/" $CONF_DIR/$CONF_FILE
 
         echo "$LOG_MESSAGE configuring keystone database IP"
         sed -i "s/_DB_HOST_/$DB_HOST/" $CONF_DIR/$CONF_FILE
