@@ -65,15 +65,36 @@ if [ $ret -ne 0 ]; then
     exit $ret
 fi
 
+# bootstrap openstack settings
+set +e
 echo "Bootstrapping keystone"
 docker run --rm --net=host -e DEBUG="true" --name bootstrap_keystone \
            ${DOCKER_PROJ_NAME}keystone:latest \
-           bash -c "keystone-manage bootstrap --bootstrap-password verys3cr3t"
+           bash -c "keystone-manage bootstrap --bootstrap-password veryS3cr3t \
+                   --bootstrap-username admin \
+                   --bootstrap-project-name admin \
+                   --bootstrap-role-name admin \
+                   --bootstrap-service-name keystone \
+                   --bootstrap-region-id RegionOne \
+                   --bootstrap-admin-url http://127.0.0.1:35357 \
+                   --bootstrap-public-url http://127.0.0.1:5000 \
+                   --bootstrap-internal-url http://127.0.0.1:5000 "
+
 ret=$?
 if [ $ret -ne 0 ]; then
     echo "Bootstrapping error!"
     exit $ret
 fi
+
+docker run --net=host --rm $http_proxy_args ${DOCKER_PROJ_NAME}osadmin:latest \
+           /bin/bash -c ". /app/adminrc; bash -x /app/bootstrap.sh"
+ret=$?
+if [ $ret -ne 0 ] && [ $ret -ne 128 ]; then
+    echo "Error: Keystone bootstrap error ${ret}!"
+    exit $ret
+fi
+set -e
+
 
 # test whether API is really working
 # we try to create service over identity API v3
@@ -88,17 +109,43 @@ if [[ ${OUT} != *"versions"* ]]; then
     exit 1
 fi
 
-# POST API call - create service
-URL="http://127.0.0.1:35357/v3/services"
-echo "Creating service keystone ..."
-OUT=$(curl -s -X POST -H "X-Auth-Token:${ADMIN_TOKEN}" -H "Content-Type: application/json" -d '{"service": {"type": "identity", "name": "keystone", "description": "Identity"}}' "${URL}")
-echo ${OUT}
+TOKEN=$(curl -s -i \
+  -H "Content-Type: application/json" \
+  -d '
+{ "auth": {
+    "identity": {
+      "methods": ["password"],
+      "password": {
+        "user": {
+          "name": "admin",
+          "domain": { "id": "default" },
+          "password": "veryS3cr3t"
+        }
+      }
+    },
+    "scope": {
+      "project": {
+        "name": "admin",
+        "domain": { "id": "default" }
+      }
+    }
+  }
+}' \
+  "http://127.0.0.1:5000/v3/auth/tokens" | awk '/X-Subject-Token/ {print $2}')
 
-# Test whether service was created
-URL="http://127.0.0.1:5000/v3/services"
-OUT=$(curl -s -H "X-Auth-Token:${ADMIN_TOKEN}" "${URL}")
+# Create test usea
+URL="http://127.0.0.1:5000/v3/users"
+OUT=$(curl -s \
+      -H "X-Auth-Token: ${TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{"user": {"name": "newtestuser", "password": "dfkYAtvad"}}' \
+      "${URL}")
+
+# Test whether we can find test user
+URL="http://127.0.0.1:5000/v3/users"
+OUT=$(curl -s -H "X-Auth-Token:${TOKEN}" "${URL}")
 echo Test check output: ${OUT}
-if [[ ${OUT} != *"services"* || ${OUT} != *"keystone"* ]]; then
+if [[ ${OUT} != *"newtestuser"* ]]; then
     echo "TEST ERROR !!!"
     exit 1
 fi
