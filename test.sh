@@ -51,14 +51,14 @@ docker run  -d --net=host -e DEBUG="true" -e DB_SYNC="true" \
 ##### TESTS #####
 
 
-wait_for_port 5000 30
+wait_for_port 5000 360
 ret=$?
 if [ $ret -ne 0 ]; then
     echo "Error: Port 5000 not bounded!"
     exit $ret
 fi
 
-wait_for_port 35357 30
+wait_for_port 35357 360
 ret=$?
 if [ $ret -ne 0 ]; then
     echo "Error: Port 35357 not bounded!"
