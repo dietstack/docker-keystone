@@ -4,8 +4,8 @@ set -e
 # set debug
 DEBUG_OPT=false
 if [[ $DEBUG ]]; then
-        set -x
-        DEBUG_OPT=true
+    set -x
+    DEBUG_OPT=true
 fi
 
 # if keystone is not installed, quit
@@ -28,25 +28,25 @@ CONF_FILE="keystone.conf"
 # check if external config is provided
 echo "$LOG_MESSAGE Checking if external config is provided.."
 if [ -f "$OVERRIDE_DIR/$CONF_FILE" ]; then
-        echo "$LOG_MESSAGE  ==> external config found!. Using it."
-        OVERRIDE=1
-        rm -f "$CONF_DIR/$CONF_FILE"
-        ln -s "$OVERRIDE_DIR/$CONF_FILE" "$CONF_DIR/$CONF_FILE"
+    echo "$LOG_MESSAGE  ==> external config found!. Using it."
+    OVERRIDE=1
+    rm -f "$CONF_DIR/$CONF_FILE"
+    ln -s "$OVERRIDE_DIR/$CONF_FILE" "$CONF_DIR/$CONF_FILE"
 fi
 
 if [ $OVERRIDE -eq 0 ]; then
-        echo "$LOG_MESSAGE configuring debug option"
-        sed -i "s/_DEBUG_OPT_/$DEBUG_OPT/" $CONF_DIR/$CONF_FILE
+    echo "$LOG_MESSAGE configuring debug option"
+    sed -i "s/_DEBUG_OPT_/$DEBUG_OPT/" $CONF_DIR/$CONF_FILE
 
-        echo "$LOG_MESSAGE configuring keystone database IP"
-        sed -i "s/_DB_HOST_/$DB_HOST/" $CONF_DIR/$CONF_FILE
+    echo "$LOG_MESSAGE configuring keystone database IP"
+    sed -i "s/_DB_HOST_/$DB_HOST/" $CONF_DIR/$CONF_FILE
 
-        echo "$LOG_MESSAGE configuring keystone database port"
-        sed -i "s/_DB_PORT_/$DB_PORT/" $CONF_DIR/$CONF_FILE
+    echo "$LOG_MESSAGE configuring keystone database port"
+    sed -i "s/_DB_PORT_/$DB_PORT/" $CONF_DIR/$CONF_FILE
 
-        echo "$LOG_MESSAGE configuring keystone db password"
-        sed -i "s/_DB_PASSWORD_/$DB_PASSWORD/" $CONF_DIR/$CONF_FILE
-        echo "$LOG_MESSAGE  ==> done"
+    echo "$LOG_MESSAGE configuring keystone db password"
+    sed -i "s/_DB_PASSWORD_/$DB_PASSWORD/" $CONF_DIR/$CONF_FILE
+    echo "$LOG_MESSAGE  ==> done"
 fi
 
 [ $DB_SYNC ] && echo "Running db_sync ..." && keystone-manage db_sync
